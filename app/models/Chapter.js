@@ -1,7 +1,6 @@
 // Chapter.js
 const Sequelize = require("sequelize");
 const db = require("../../config/db");
-const Subject = require("./Subject");
 
 const Chapter = db.define("chapters", {
   id: {
@@ -12,9 +11,9 @@ const Chapter = db.define("chapters", {
   name: Sequelize.STRING,
   object: Sequelize.INTEGER,
 });
-Chapter.belongsTo(Subject, {
-  as: "subjects",
-  foreignKey: "object",
-  onDelete: "CASCADE",
-});
+// Chapter.belongsTo(Subject, {
+//   as: "subjects",
+//   foreignKey: "object",
+//   onDelete: "CASCADE",
+// });
 module.exports = Chapter;

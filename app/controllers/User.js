@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const { errorResponse } = require("../../utils/response");
 const bcrypt = require("bcryptjs");
-const validateUserLogin = require("../../utils/validators/user");
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
 require("dotenv").config();
@@ -9,11 +8,6 @@ require("dotenv").config();
 class UserController {
   static async register(req, res) {
     try {
-      const { errors, isValid } = validateUserLogin(req.body);
-      if (!isValid) {
-        return errorResponse(res, 400, "Bad Request", errors);
-      }
-
       const currentUser = await User.findOne({
         where: {
           username: req.body.username,
@@ -50,10 +44,6 @@ class UserController {
   }
   static async login(req, res) {
     try {
-      const { errors, isValid } = validateUserLogin(req.body);
-      if (!isValid) {
-        return errorResponse(res, 400, "Bad Request", errors);
-      }
       const user = await User.findOne({
         where: {
           username: req.body.username,

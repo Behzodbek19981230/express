@@ -1,6 +1,5 @@
 const Sequelize = require("sequelize");
 const db = require("../../config/db");
-const Role = require("./Role");
 const User = db.define(
   "users",
   {
@@ -17,7 +16,5 @@ const User = db.define(
   },
   { underscored: true }
 );
-
-User.belongsTo(Role, { as: "Roles", foreignKey: "role", onDelete: "CASCADE" });
 
 module.exports = User;
