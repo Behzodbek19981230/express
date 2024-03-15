@@ -12,7 +12,6 @@ const User = db.define(
     password: Sequelize.STRING,
     fullName: Sequelize.STRING,
     avatar: Sequelize.STRING,
-    role: Sequelize.INTEGER,
   },
   { underscored: true }
 );

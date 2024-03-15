@@ -6,6 +6,31 @@ const { Op } = require("sequelize");
 require("dotenv").config();
 
 class UserController {
+  static async getAllUsers(req, res) {
+    try {
+      const users = await User.findAll();
+      if (!users.length > 0) {
+        return res.status(200).json({
+          code: 200,
+          status: "OK",
+          message: "Success Fetching Data",
+          data: [],
+        });
+      }
+
+      res.status(200).json({
+        code: 200,
+        status: "OK",
+        message: "Success Fetching Data",
+        total: users.length,
+        data: users,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: "Internal Server Error",
+      });
+    }
+  }
   static async register(req, res) {
     try {
       const currentUser = await User.findOne({
@@ -111,75 +136,7 @@ class UserController {
       });
     }
   }
-  static async getAllUsers(req, res) {
-    let { limit, role, sort = "ASC", q, page = 1 } = req.query;
-    let conditions = {};
 
-    if (q) {
-      conditions.where = {
-        ...conditions.where,
-        [Op.or]: [
-          {
-            username: {
-              [Op.like]: "%" + q + "%",
-            },
-          },
-          {
-            fullName: {
-              [Op.like]: "%" + q + "%",
-            },
-          },
-        ],
-      };
-    }
-    if (!role == "") {
-      conditions.where = {
-        ...conditions.where,
-        role,
-      };
-    }
-
-    if (limit) {
-      limit = Number.parseInt(limit < 1 ? 1 : limit);
-      page = Number.parseInt(page < 1 ? 1 : page);
-
-      conditions.limit = limit;
-      conditions.offset = (page - 1) * limit;
-    }
-
-    try {
-      const users = await User.findAndCountAll({
-        attributes: {
-          exclude: ["role", "createdAt", "updatedAt"],
-        },
-        ...conditions,
-        order: [["fullName", sort || "ASC"]],
-      });
-
-      if (!users.rows.length > 0) {
-        return res.status(200).json({
-          code: 200,
-          status: "OK",
-          message: "Success Fetching Data",
-          total: 0,
-          data: [],
-        });
-      }
-
-      res.status(200).json({
-        code: 200,
-        status: "OK",
-        message: "Success Fetching Data",
-        total: users.count,
-        data: users.rows,
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        message: "Internal Server Error",
-      });
-    }
-  }
   static async delete(req, res) {
     try {
       const user = await User.findByPk(req.params.id);
