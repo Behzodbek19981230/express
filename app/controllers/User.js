@@ -1,11 +1,8 @@
-/** @format */
-
 const User = require("../models/User");
 const { errorResponse } = require("../../utils/response");
 const bcrypt = require("bcryptjs");
 const validateUserLogin = require("../../utils/validators/user");
 const jwt = require("jsonwebtoken");
-const Role = require("../models/Role");
 const { Op } = require("sequelize");
 require("dotenv").config();
 
@@ -36,7 +33,6 @@ class UserController {
         username: req.body.username,
         password: hashedPassword,
         fullName: req.body.fullName,
-        role: req.body.role,
       };
       const newUser = await User.create(data);
       res.json({
@@ -59,14 +55,6 @@ class UserController {
         return errorResponse(res, 400, "Bad Request", errors);
       }
       const user = await User.findOne({
-        include: [
-          {
-            as: "Roles",
-            model: Role,
-            required: true,
-            attributes: ["id", "name"],
-          },
-        ],
         where: {
           username: req.body.username,
         },
@@ -111,16 +99,7 @@ class UserController {
   }
   static async profile(req, res) {
     try {
-      const user = await User.findByPk(req.user.id, {
-        include: [
-          {
-            as: "Roles",
-            model: Role,
-            required: true,
-            attributes: ["id", "name"],
-          },
-        ],
-      });
+      const user = await User.findByPk(req.user.id, {});
 
       if (!user) {
         return res.status(404).json({
@@ -180,14 +159,6 @@ class UserController {
 
     try {
       const users = await User.findAndCountAll({
-        include: [
-          {
-            as: "Roles",
-            model: Role,
-            required: true,
-            attributes: ["id", "name"],
-          },
-        ],
         attributes: {
           exclude: ["role", "createdAt", "updatedAt"],
         },
@@ -246,16 +217,7 @@ class UserController {
   }
   static async getByIdUser(req, res) {
     try {
-      const user = await User.findByPk(req.params.id, {
-        include: [
-          {
-            as: "Roles",
-            model: Role,
-            required: true,
-            attributes: ["id", "name"],
-          },
-        ],
-      });
+      const user = await User.findByPk(req.params.id);
 
       if (!user) {
         return errorResponse(res, 404, "Not found", "Cannot find food");
