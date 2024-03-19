@@ -1,9 +1,7 @@
 const route = require("express").Router();
 const user = require("./user");
-const chapter = require("./chapter");
 const auth = require("../middleware/auth");
-
-// route.use('/cars',cars)
+const category = require("./category");
 route.use("/user", user);
-route.use("/chapter", auth, chapter);
+route.use("/category", category);
 module.exports = route;
